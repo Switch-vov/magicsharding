@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: magicsharding
+  profiles:
+    active: dev
+  sharding:
+    datasources:
+      ds0:
+        url: jdbc:mysql://127.0.0.1:3306/db0?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+        username: root
+        password:
+      ds1:
+        url: jdbc:mysql://127.0.0.1:3306/db1?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+        username: root
+        password:
+    tables:
+      user:
+        actualDataNodes: ds0.user0,ds0.user1,ds0.user2,ds1.user0,ds1.user1,ds1.user2
+        databaseStrategy:
+          shardingColumn: id
+          algorithmExpression: ds${id % 2}
+        tableStrategy:
+          shardingColumn: id
+          algorithmExpression: user${id % 3}
+      t_order:
+        actualDataNodes: ds0.t_order0,ds0.t_order1,ds1.t_order0,ds1.t_order1
+        databaseStrategy:
+          shardingColumn: uid
+          algorithmExpression: ds${uid % 2}
+        tableStrategy:
+          shardingColumn: id
+          algorithmExpression: t_order${id % 2}
+logging:
+  level:
+    root: info
+    com.switchvov: debug
